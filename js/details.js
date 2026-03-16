@@ -13,6 +13,8 @@ const rank = document.getElementById('rank');
 const episodes = document.getElementById('episodes');
 const studio = document.getElementById('studio');
 const synopsis = document.getElementById('synopsis');
+const watchSection = document.getElementById('watchSection');
+const watchLinks = document.getElementById('watchLinks');
 
 const charGrid = document.getElementById('charGrid');
 const trailerSection = document.getElementById('trailerSection');
@@ -35,9 +37,9 @@ const fetchAnimeDetails = async () => {
 
         // Populate header
         document.title = `${anime.title_english || anime.title} | Anime Universe`;
-        
+
         posterImg.src = anime.images.webp.large_image_url;
-        
+
         if (anime.trailer && anime.trailer.images && anime.trailer.images.maximum_image_url) {
             heroImg.src = anime.trailer.images.maximum_image_url;
         } else {
@@ -45,7 +47,7 @@ const fetchAnimeDetails = async () => {
         }
 
         animeTitle.textContent = anime.title_english || anime.title;
-        
+
         // Tags (Genres + Demographics)
         const allTags = [...(anime.genres || []), ...(anime.demographics || []), ...(anime.themes || [])];
         animeTags.innerHTML = '';
@@ -60,12 +62,26 @@ const fetchAnimeDetails = async () => {
         score.textContent = anime.score || 'N/A';
         rank.textContent = anime.rank ? `#${anime.rank}` : 'N/A';
         episodes.textContent = anime.episodes ? `${anime.episodes} Eps` : 'Ongoing';
-        
+
         if (anime.studios && anime.studios.length > 0) {
             studio.textContent = anime.studios[0].name;
         }
 
         synopsis.textContent = anime.synopsis || "No synopsis available for this anime.";
+
+        // Watch Links
+        if (anime.streaming && anime.streaming.length > 0) {
+            watchSection.style.display = 'block';
+            watchLinks.innerHTML = '';
+            anime.streaming.forEach(link => {
+                const a = document.createElement('a');
+                a.href = link.url;
+                a.target = '_blank';
+                a.classList.add('watch-btn');
+                a.innerHTML = `<i class="fa-solid fa-play"></i> ${link.name}`;
+                watchLinks.appendChild(a);
+            });
+        }
 
         // Trailer
         if (anime.trailer && anime.trailer.youtube_id) {
@@ -94,7 +110,7 @@ const fetchCharacters = async () => {
             card.classList.add('char-card');
 
             const imgUrl = char.character.images.webp.image_url;
-            
+
             card.innerHTML = `
                 <img src="${imgUrl}" alt="${char.character.name}" class="char-img">
                 <div class="char-info">
@@ -102,7 +118,7 @@ const fetchCharacters = async () => {
                     <div class="char-role">${char.role}</div>
                 </div>
             `;
-            
+
             charGrid.appendChild(card);
         });
 

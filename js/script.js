@@ -81,14 +81,14 @@ const fetchAnime = async (endpoint, container, loader, limit = 10) => {
         const res = await fetch(`${API_BASE}${endpoint}`);
         const data = await res.json();
         const animes = data.data.slice(0, limit);
-        
+
         if (container) {
             container.innerHTML = '';
             animes.forEach(anime => {
                 container.appendChild(createAnimeCard(anime));
             });
         }
-        
+
         if (loader) hideLoader(loader);
         return animes;
     } catch (error) {
@@ -105,9 +105,9 @@ const fetchAnime = async (endpoint, container, loader, limit = 10) => {
 let searchTimeout;
 searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
-    
+
     clearTimeout(searchTimeout);
-    
+
     if (query.length < 3) {
         searchResultsSection.classList.add('hidden');
         mainContent.classList.remove('hidden');
@@ -117,14 +117,14 @@ searchInput.addEventListener('input', (e) => {
     searchTimeout = setTimeout(async () => {
         searchResultsSection.classList.remove('hidden');
         mainContent.classList.add('hidden');
-        
+
         showLoader(searchLoader);
         try {
             const res = await fetch(`${API_BASE}/anime?q=${query}&limit=20`);
             const data = await res.json();
-            
+
             searchResultsGrid.innerHTML = '';
-            
+
             if (data.data.length === 0) {
                 searchResultsGrid.innerHTML = `<p class="error-msg" style="grid-column: 1/-1;">No anime found matching "${query}"</p>`;
             } else {
@@ -143,10 +143,10 @@ searchInput.addEventListener('input', (e) => {
 const initPage = async () => {
     // Top Trending/Airing
     const topAiring = await fetchAnime('/top/anime?filter=airing', trendingGrid, trendingLoader, 10);
-    
+
     // Top 10 All Time
     await fetchAnime('/top/anime?filter=bypopularity', topGrid, topLoader, 10);
-    
+
     // Top Upcoming
     await fetchAnime('/top/anime?filter=upcoming', upcomingGrid, upcomingLoader, 5);
 
